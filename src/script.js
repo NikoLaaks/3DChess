@@ -193,8 +193,9 @@ const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // Plane at y=0
 
+let currentPlayer = 'white'; // Track the current player
 let selectedPiece = null;
-let selectedSquare = null;
+let fromSquare = null;
 
 // 
 //    Handle mouse clicks
@@ -212,23 +213,117 @@ function onMouseClick(event) {
     const object = intersects[0].object;
 
     if (object.name.includes('piece')) {
+      const pieceSquare = getPieceSquareFromWorldCoordinates(object);
+      const pieceColor = object.name.split('_')[1]; // White or Black
+
+      //Check if the piece belongs to the current player
+      if ((currentPlayer === 'white' && pieceColor === 'black') || (currentPlayer === 'black' && pieceColor === 'white')) {
+        console.log('Invalid move: wrong player');
+        return;
+      }
+
       selectedPiece = object.name;
-      console.log('Piece clicked:', object.name);
-      console.log('selected piece is:', selectedPiece);
+      fromSquare = pieceSquare;
+      console.log(`Piece clicked: ${selectedPiece} at square ${fromSquare}`);
+
+      //get valid moves
+      const validMoves = chess.moves({ square: fromSquare, verbose: true });
+
+      // If the piece has valid moves, highlight them
+      if (validMoves.length > 0) {
+        //highlightValidMoves(validMoves);
+        console.log(`Valid moves for ${selectedPiece}:`, validMoves);
+      } else {
+          console.log(`No valid moves available for ${selectedPiece}`);
+          selectedPiece = null;
+          fromSquare = null;
+          return;
+      }
+    
+
+
     } else {
-      const intersectionPoint = new THREE.Vector3();
-      raycaster.ray.intersectPlane(plane, intersectionPoint);
-      const { x, z } = intersectionPoint; // Get clicked position
-      const square = worldToChess(x, z); // Convert to chessboard coordinates
-      console.log('Square clicked:', square, 'at', x, z);
-    }
+      // If a square is clicked
+        const intersectionPoint = new THREE.Vector3();
+        raycaster.ray.intersectPlane(plane, intersectionPoint);
+        const { x, z } = intersectionPoint; // Get clicked position
+        const toSquare = worldToChess(x, z); // Convert to chessboard coordinates
+        console.log('Square clicked:', toSquare);
+
+        if(fromSquare){
+          const validMoves = chess.moves({ square: fromSquare, verbose: true });
+
+          if(validMoves.some(move => move.to === toSquare)) {
+            movePiece(fromSquare, toSquare);
+            checkGameStatus();
+          } else {
+            console.log('Invalid move');
+            selectedPiece = null;
+            fromSquare = null;
+          }
+        }
+      }
   }
 }
 window.addEventListener('click', onMouseClick);
 
-function isValidMove(from, to) {
-  const moves = chess.moves({square: from, verbose: true});
-  return moves.some(move => move.to === to);
+function getPieceSquareFromWorldCoordinates(piece) {
+  const piecePosition = piece.position;
+  const chessSquare = worldToChess(piecePosition.x, piecePosition.z);
+  return chessSquare;
+}
+
+function movePiece(from, to) {
+  const move = chess.move({ from, to });
+  if (move === null) {
+    console.log('Invalid move');
+    selectedPiece = null;
+    return;
+  }
+  console.log("Move made in chess.js:", move);
+
+  const movingPiece = pieces[from];
+  if (!movingPiece) {
+    console.warn("No piece at", from);
+    return;
+  }
+
+  // handle caprture
+  if(move.captured && pieces[to]) {
+    scene.remove(pieces[to]);
+    delete pieces[to];
+  }
+  //move the 3D object
+  const { x, z } = chessToWorld(to);
+  movingPiece.position.set(x, movingPiece.position.y, z);
+
+  //update mapping
+  delete pieces[from]; // Remove the piece from the old square
+  pieces[to] = movingPiece; // Add the piece to the new square
+
+  //update piece name
+  movingPiece.name = `piece_${move.color}_${move.piece}_${to}`;
+
+  // switch player
+  currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
+  console.log(`Current player: ${currentPlayer}`);
+
+  selectedPiece = null;
+  fromSquare = null;
+  console.log("Pieces mapping:", pieces);
+  console.log("Chess board state:", chess.ascii());
+  console.log("Chess board fen:", chess.fen());
+  console.log("Chess board pgn:", chess.pgn());
+  
+}
+
+function checkGameStatus() {
+  if (chess.isGameOver()) {
+    console.log('Game over');
+    // Implement game over logic here (e.g., show message, reset game, etc.)
+  } else if (chess.inCheck()) {
+    console.log('Check!');
+  }
 }
 
 // Render loop
