@@ -11,12 +11,12 @@ const scene = new THREE.Scene();
 
 // Create the camera (PerspectiveCamera: FOV, aspect ratio, near, far)
 const camera = new THREE.PerspectiveCamera(
-  75,
+  50,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-camera.position.set(15, 15, 15); // Adjust to get a good view
+camera.position.set(0, 5, 5); // Adjust to get a good view
 
 // Create the renderer and attach it to the canvas
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -136,7 +136,17 @@ function createPiece(type, color, square) {
         // Traverse the model and replace materials
         piece.traverse((child) => {
           if (child.isMesh) {
-            child.material = new THREE.MeshStandardMaterial({ color: color === 'white' ? 0xffffff : 0x454545 });
+            child.material = new THREE.MeshStandardMaterial({ 
+              color: color === 'white' ? 0xffffff : 0x454545,
+              side: THREE.DoubleSide
+            });
+
+            // Ensure geometry has bounding box and sphere
+            child.geometry.computeBoundingBox();
+            child.geometry.computeBoundingSphere();
+
+            // (Optional) Ensure the mesh can be raycasted properly
+            child.raycast = THREE.Mesh.prototype.raycast;
           }
         });
         piece.scale.set(15, 15, 15);
@@ -206,15 +216,26 @@ function onMouseClick(event) {
 
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
+  console.log("All intersects:", intersects.map(i => i.object.name)); // For debugging, remove this
 
   
 
   if (intersects.length > 0) {
-    const object = intersects[0].object;
+    const pieceIntersect = intersects.find(i => i.object && i.object.name && i.object.name.includes('piece'));
 
-    if (object.name.includes('piece')) {
+    if (pieceIntersect) {
+      const object = pieceIntersect.object;
       const pieceSquare = getPieceSquareFromWorldCoordinates(object);
       const pieceColor = object.name.split('_')[1]; // White or Black
+
+      if(pieceColor !== currentPlayer) {
+        if(fromSquare) {
+          
+        }
+      }
+
+
+
 
       //Check if the piece belongs to the current player
       if ((currentPlayer === 'white' && pieceColor === 'black') || (currentPlayer === 'black' && pieceColor === 'white')) {
@@ -288,7 +309,7 @@ function movePiece(from, to) {
     return;
   }
 
-  // handle caprture
+  // handle capture
   if(move.captured && pieces[to]) {
     scene.remove(pieces[to]);
     delete pieces[to];
