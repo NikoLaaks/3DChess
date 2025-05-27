@@ -12,16 +12,16 @@ npm run dev
 ```
 
 # TÄRKEIN TODO NEXT
-- Kun valkoinen pelaa niin voi valita vain omia nappuloita ja sama mustalla
-    rivi 230 eteenpäin
-
+- 
 # Todo List
-- Molempien puolien pelaus mahdolliseksi
-- Chess.js logiikan viimeistely ja testaus
-- Game loop valmiiksi
-- Tekoälyn lisäys
+- Landing page
+- Koodin paloittelu pienempiin osiin
+- Lokaali multiplayer
+- Tekoäly singleplayer
+- 
 
 ## extrat myöhemmin
 - Näytä sallitut liikkeet
+- Näytä valittu nappula
 - Scene siistiksi
 - Multiplayer
