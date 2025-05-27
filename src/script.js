@@ -11,12 +11,12 @@ const scene = new THREE.Scene();
 
 // Create the camera (PerspectiveCamera: FOV, aspect ratio, near, far)
 const camera = new THREE.PerspectiveCamera(
-  50,
+  45,
   window.innerWidth / window.innerHeight,
   0.1,
   1000
 );
-camera.position.set(0, 5, 5); // Adjust to get a good view
+camera.position.set(0, 8, 8); // Adjust to get a good view
 
 // Create the renderer and attach it to the canvas
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
@@ -214,56 +214,97 @@ function onMouseClick(event) {
   mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
   mouse.y = - (event.clientY / window.innerHeight) * 2 + 1;
 
+  //Use raycaster to get clicked object
   raycaster.setFromCamera(mouse, camera);
   const intersects = raycaster.intersectObjects(scene.children, true);
   console.log("All intersects:", intersects.map(i => i.object.name)); // For debugging, remove this
 
-  
+  const pieceIntersect = intersects.find(i => i.object && i.object.name && i.object.name.includes('piece'));
 
-  if (intersects.length > 0) {
-    const pieceIntersect = intersects.find(i => i.object && i.object.name && i.object.name.includes('piece'));
+  // If any piece is clicked
+  if (intersects.length > 0 && pieceIntersect) {
+    // If no piece has been selected before clicking
+    if (fromSquare == null) {
+      
+      // If clicked object is piece
+      if (pieceIntersect) {
+        const object = pieceIntersect.object;
+        const pieceSquare = getPieceSquareFromWorldCoordinates(object);
+        const pieceColor = object.name.split('_')[1]; // White or Black
 
-    if (pieceIntersect) {
-      const object = pieceIntersect.object;
-      const pieceSquare = getPieceSquareFromWorldCoordinates(object);
-      const pieceColor = object.name.split('_')[1]; // White or Black
+        //Check if the piece belongs to the current player
+        if ((currentPlayer === 'white' && pieceColor === 'black') || (currentPlayer === 'black' && pieceColor === 'white')) {
+          console.log('Invalid move: wrong player');
+          return;
+        }
+        selectedPiece = object.name;
+        fromSquare = pieceSquare;
+        console.log(`Piece clicked: ${selectedPiece} at square ${fromSquare}`);
 
-      if(pieceColor !== currentPlayer) {
-        if(fromSquare) {
-          
+        //get valid moves
+        const validMoves = chess.moves({ square: fromSquare, verbose: true });
+
+        // If the piece has valid moves, highlight them
+        if (validMoves.length > 0) {
+          //highlightValidMoves(validMoves);
+          console.log(`Valid moves for ${selectedPiece}:`, validMoves);
+        } else {
+            //If no valid moves, set selectedPiece and fromSquare back to null
+            console.log(`No valid moves available for ${selectedPiece}`);
+            selectedPiece = null;
+            fromSquare = null;
+            return;
         }
       }
+      // If piece is selected before clicking
+    } else if (fromSquare != null) {
+        const pieceIntersect = intersects.find(i => i.object && i.object.name && i.object.name.includes('piece'));
+        // If clicked object is piece
+        if (pieceIntersect) {
+          const object = pieceIntersect.object;
+          const pieceSquare = getPieceSquareFromWorldCoordinates(object);
+          const pieceColor = object.name.split('_')[1]; // White or Black
 
+          //Check if clicked piece belongs to other player
+          if ((currentPlayer === 'white' && pieceColor === 'black') || (currentPlayer === 'black' && pieceColor === 'white')) {
+            // Get coordinates from the piece and use it as a square to move to if valid
+            if(fromSquare) {
+              const validMoves = chess.moves({ square: fromSquare, verbose: true });
+              const toSquare = getPieceSquareFromWorldCoordinates(object);
 
+              if(validMoves.some(move => move.to === toSquare)) {
+                movePiece(fromSquare, toSquare);
+                checkGameStatus();
+              } else {
+                console.log('Invalid move');
+                selectedPiece = null;
+                fromSquare = null;
+              }
+            }
+          // If selected piece is currentPlayer piece
+          } else { 
+            selectedPiece = object.name;
+            fromSquare = pieceSquare;
+            console.log(`Piece clicked: ${selectedPiece} at square ${fromSquare}`);
 
+            //get valid moves
+            const validMoves = chess.moves({ square: fromSquare, verbose: true });
 
-      //Check if the piece belongs to the current player
-      if ((currentPlayer === 'white' && pieceColor === 'black') || (currentPlayer === 'black' && pieceColor === 'white')) {
-        console.log('Invalid move: wrong player');
-        return;
-      }
-
-      selectedPiece = object.name;
-      fromSquare = pieceSquare;
-      console.log(`Piece clicked: ${selectedPiece} at square ${fromSquare}`);
-
-      //get valid moves
-      const validMoves = chess.moves({ square: fromSquare, verbose: true });
-
-      // If the piece has valid moves, highlight them
-      if (validMoves.length > 0) {
-        //highlightValidMoves(validMoves);
-        console.log(`Valid moves for ${selectedPiece}:`, validMoves);
-      } else {
-          console.log(`No valid moves available for ${selectedPiece}`);
-          selectedPiece = null;
-          fromSquare = null;
-          return;
-      }
-    
-
-
-    } else {
+            // If the piece has valid moves, highlight them
+            if (validMoves.length > 0) {
+              //highlightValidMoves(validMoves);
+              console.log(`Valid moves for ${selectedPiece}:`, validMoves);
+            } else {
+                //If no valid moves, set selectedPiece and fromSquare back to null
+                console.log(`No valid moves available for ${selectedPiece}`);
+                selectedPiece = null;
+                fromSquare = null;
+                return;
+            }
+          }
+        }
+    } 
+  } else {
       // If a square is clicked
         const intersectionPoint = new THREE.Vector3();
         raycaster.ray.intersectPlane(plane, intersectionPoint);
@@ -285,7 +326,7 @@ function onMouseClick(event) {
         }
       }
   }
-}
+
 window.addEventListener('click', onMouseClick);
 
 function getPieceSquareFromWorldCoordinates(piece) {
@@ -323,7 +364,8 @@ function movePiece(from, to) {
   pieces[to] = movingPiece; // Add the piece to the new square
 
   //update piece name
-  movingPiece.name = `piece_${move.color}_${move.piece}_${to}`;
+  const colorName = move.color === 'w' ? 'white' : 'black';
+  movingPiece.name = `piece_${colorName}_${move.piece}_${to}`;
 
   // switch player
   currentPlayer = currentPlayer === 'white' ? 'black' : 'white';
