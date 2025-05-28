@@ -7,10 +7,26 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-    <button id="btnLocalMultiplayer">Play local multiplayer</button>
-    <div id="game" class="view" style="display:none;">
+    <!-- Top Navigation Bar (Hidden initially, shown during game) -->
+    <div id="gameHeader" class="top-bar" style="display: none;">
+        <button id="btnRestart">Restart</button>
+        <button id="btnBackToMenu">Back to Menu</button>
+    </div>
+
+    <!-- Landing Page View -->
+    <div id="landingPage" class="view">
+        <h1>3D Chess Game</h1>
+        <p>Play chess in 3D – against another player or AI.</p>
+        <button id="btnLocalMultiplayer">Play Local Multiplayer</button>
+        <!-- Later: Add AI and Online buttons -->
+    </div>
+    
+    <!-- Game Canvas View -->
+    <div id="game" class="view" style="display: none;">
         <canvas class="webgl"></canvas>
     </div>
+
+
     <script type="module" src="./main.js"></script>
 </body>
 </html>
