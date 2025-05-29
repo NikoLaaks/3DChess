@@ -3,12 +3,19 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Chess } from "chess.js";
 
+import { worldToChess, chessToWorld } from '../game/utils.js';
+
+import { createInitialPieces } from "../game/pieces.js";
+
 export function initLocalMultiplayer() {
   // Select the canvas element
   const canvas = document.querySelector(".webgl");
 
   // Create the scene
   const scene = new THREE.Scene();
+
+  // NEW IMPORTED FUNCTIONS HERE
+  const pieces = createInitialPieces(scene);
 
   // Create the camera (PerspectiveCamera: FOV, aspect ratio, near, far)
   const camera = new THREE.PerspectiveCamera(
@@ -64,21 +71,7 @@ export function initLocalMultiplayer() {
   gridHelper.position.y = 0.01; // Lift slightly to avoid z-fighting
   scene.add(gridHelper);
 
-  // Convert world coordinates to chessboard coordinates
-  function worldToChess(x, z) {
-    const file = String.fromCharCode(97 + Math.round(x + 3.5)); // 'a' + index
-    const rank = (Math.round(-z + 3.5) + 1).toString(); // Flip z-axis for ranks
-    return file + rank; // Example: "e4"
-  }
-  // Convert chessboard coordinates to world coordinates
-  function chessToWorld(square) {
-    const file = square.charCodeAt(0) - 97; // Convert 'a' to 0, 'b' to 1, ...
-    const rank = parseInt(square[1]) - 1;
-    return {
-      x: file - 3.5,
-      z: -(rank - 3.5),
-    };
-  }
+  
 
   /*
    * LOAD 3D MODELS
@@ -105,103 +98,7 @@ export function initLocalMultiplayer() {
     });
   });
 
-  // Load pieces
-  const pieces = {};
-
-  const piecePaths = {
-    p: "./chess_pieces/Soldier.gltf",
-    r: "./chess_pieces/Rook.gltf",
-    n: "./chess_pieces/Knight.gltf",
-    b: "./chess_pieces/Bishop.gltf",
-    q: "./chess_pieces/Queen.gltf",
-    k: "./chess_pieces/King.gltf",
-  };
-
-  const yOffsets = {
-    p: 0.4, // Pawn
-    r: 0.45, // Rook
-    n: 0.35, // Knight
-    b: 0.6, // Bishop
-    q: 0.82, // Queen
-    k: 0.86, // King
-  };
-
-  function createPiece(type, color, square) {
-    const modelPath = piecePaths[type];
-
-    if (modelPath) {
-      gltfloader.load(
-        modelPath,
-        (gltf) => {
-          const piece = gltf.scene.children[0];
-
-          // Traverse the model and replace materials
-          piece.traverse((child) => {
-            if (child.isMesh) {
-              child.material = new THREE.MeshStandardMaterial({
-                color: color === "white" ? 0xffffff : 0x454545,
-                side: THREE.DoubleSide,
-              });
-
-              // Ensure geometry has bounding box and sphere
-              child.geometry.computeBoundingBox();
-              child.geometry.computeBoundingSphere();
-
-              // (Optional) Ensure the mesh can be raycasted properly
-              child.raycast = THREE.Mesh.prototype.raycast;
-            }
-          });
-          piece.scale.set(15, 15, 15);
-
-          const yOffset = yOffsets[type] || 0;
-
-          const { x, z } = chessToWorld(square);
-
-          piece.position.set(x, yOffset, z);
-          piece.name = `piece_${color}_${type}_${square}`;
-          scene.add(piece);
-
-          pieces[square] = piece;
-        },
-        undefined,
-        (error) => {
-          console.error(
-            "An error occurred while loading the GLTF model:",
-            error
-          );
-        }
-      );
-    }
-  }
-
-  // Create white pieces
-  for (let i = 0; i < 8; i++) {
-    createPiece("p", "white", String.fromCharCode(97 + i) + "2");
-  }
-  createPiece("r", "white", "a1");
-  createPiece("r", "white", "h1");
-  createPiece("n", "white", "b1");
-  createPiece("n", "white", "g1");
-  createPiece("b", "white", "c1");
-  createPiece("b", "white", "f1");
-  createPiece("q", "white", "d1");
-  createPiece("k", "white", "e1");
-
-  // Create black pieces
-  for (let i = 0; i < 8; i++) {
-    createPiece("p", "black", String.fromCharCode(97 + i) + "7");
-  }
-  createPiece("r", "black", "a8");
-  createPiece("r", "black", "h8");
-  createPiece("n", "black", "b8");
-  createPiece("n", "black", "g8");
-  createPiece("b", "black", "c8");
-  createPiece("b", "black", "f8");
-  createPiece("q", "black", "d8");
-  createPiece("k", "black", "e8");
-
-  console.log(pieces);
-
+  
   // Create a new chess game + raycaster
   const chess = new Chess();
   const raycaster = new THREE.Raycaster();

@@ -25,3 +25,4 @@ npm run dev
 - Näytä valittu nappula
 - Scene siistiksi
 - Multiplayer
+- Kello (mahdollisesti 3D)
