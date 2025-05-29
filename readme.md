@@ -12,10 +12,10 @@ npm run dev
 ```
 
 # TÄRKEIN TODO NEXT
-- 
+- Koodin paloittelu pienempiin osiin
+
 # Todo List
 - Landing page
-- Koodin paloittelu pienempiin osiin
 - Lokaali multiplayer
 - Tekoäly singleplayer
 - 
