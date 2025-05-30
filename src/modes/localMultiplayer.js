@@ -1,6 +1,4 @@
 import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Chess } from "chess.js";
 import { initScene } from "../game/scene.js";
 import { worldToChess, chessToWorld } from '../game/utils.js';
@@ -14,10 +12,10 @@ export function initLocalMultiplayer() {
   const canvas = document.querySelector(".webgl");
 
   // Init scene
-  const { scene, camera, renderer, controls } = initScene(canvas)
+  const { scene, camera, renderer, controls } = initScene(canvas);
 
   // Create board
-  createBoard(scene)
+  createBoard(scene);
 
   // Create pieces
   const pieces = createInitialPieces(scene);
@@ -36,7 +34,7 @@ export function initLocalMultiplayer() {
 
 
   //
-  //    Handle mouse clicks
+  //    Handle mouseclicks
   //
   function onMouseClick(event) {
     const canvas = document.querySelector('.webgl');
