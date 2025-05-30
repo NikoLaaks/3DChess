@@ -2,112 +2,38 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { Chess } from "chess.js";
-
+import { initScene } from "../game/scene.js";
 import { worldToChess, chessToWorld } from '../game/utils.js';
-
+import { movePiece, getPieceSquareFromWorldCoordinates } from "../game/movement.js";
 import { createInitialPieces } from "../game/pieces.js";
+import { createBoard } from '../game/board.js';
+import { checkGameStatus } from "../game/status.js";
 
 export function initLocalMultiplayer() {
   // Select the canvas element
   const canvas = document.querySelector(".webgl");
 
-  // Create the scene
-  const scene = new THREE.Scene();
+  // Init scene
+  const { scene, camera, renderer, controls } = initScene(canvas)
 
-  // NEW IMPORTED FUNCTIONS HERE
+  // Create board
+  createBoard(scene)
+
+  // Create pieces
   const pieces = createInitialPieces(scene);
 
-  // Create the camera (PerspectiveCamera: FOV, aspect ratio, near, far)
-  const camera = new THREE.PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    0.1,
-    1000
-  );
-  camera.position.set(0, 8, 8); // Adjust to get a good view
-
-  // Create the renderer and attach it to the canvas
-  const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-
-  // Lighting
-  const light = new THREE.DirectionalLight(0xffffff, 1);
-  light.position.set(10, 10, 10);
-  scene.add(light);
-
-  // Add a point light above the table for better visibility
-  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(0, 15, 0); // Position the light above the table
-  scene.add(pointLight);
-
-  // Optionally, add a helper to visualize the light's position
-  const pointLightHelper = new THREE.PointLightHelper(pointLight, 1);
-  scene.add(pointLightHelper);
-
-  // Add OrbitControls
-  const controls = new OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; // Enable damping (inertia)
-  controls.dampingFactor = 0.25; // Damping factor
-
-  /*
-   * HELPER OBJECTS
-   */
-  // Add AxesHelper to visualize the coordinate axes
-  const axesHelper = new THREE.AxesHelper(5); // The parameter is the length of the axes
-  scene.add(axesHelper);
-
-  // Define the chessboard size
-  const boardSize = 8;
-  const cellSize = 1;
-
-  // Create a grid helper (for debugging)
-  const gridHelper = new THREE.GridHelper(
-    boardSize,
-    boardSize,
-    "red",
-    "orange"
-  );
-  gridHelper.rotation.x = Math.PI; // Rotate to lie flat
-  gridHelper.position.y = 0.01; // Lift slightly to avoid z-fighting
-  scene.add(gridHelper);
-
-  
-
-  /*
-   * LOAD 3D MODELS
-   */
-  const gltfloader = new GLTFLoader();
-
-  // Load board model
-  gltfloader.load("/Shakkilauta.gltf", (gltf) => {
-    const chessBoard = gltf.scene.children[0];
-    scene.add(chessBoard);
-
-    chessBoard.position.set(0, -0.35, 0);
-    chessBoard.scale.set(4, 0.4, 4);
-
-    const boundingBox = new THREE.Box3().setFromObject(chessBoard);
-    const size = boundingBox.getSize(new THREE.Vector3());
-    console.log("Chessboard size:", size);
-
-    //chessboard material
-    chessBoard.traverse((child) => {
-      if (child.isMesh) {
-        console.log(child.material);
-      }
-    });
-  });
-
-  
   // Create a new chess game + raycaster
   const chess = new Chess();
   const raycaster = new THREE.Raycaster();
   const mouse = new THREE.Vector2();
   const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // Plane at y=0
 
-  let currentPlayer = "white"; // Track the current player
-  let selectedPiece = null;
-  let fromSquare = null;
+  const gameState = {
+    currentPlayer: "white",
+    selectedPiece: null,
+    fromSquare: null,
+  };
+
 
   //
   //    Handle mouse clicks
@@ -134,7 +60,7 @@ export function initLocalMultiplayer() {
     // If any piece is clicked
     if (intersects.length > 0 && pieceIntersect) {
       // If no piece has been selected before clicking
-      if (fromSquare == null) {
+      if (gameState.fromSquare == null) {
         // If clicked object is piece
         if (pieceIntersect) {
           const object = pieceIntersect.object;
@@ -143,35 +69,35 @@ export function initLocalMultiplayer() {
 
           //Check if the piece belongs to the current player
           if (
-            (currentPlayer === "white" && pieceColor === "black") ||
-            (currentPlayer === "black" && pieceColor === "white")
+            (gameState.currentPlayer === "white" && pieceColor === "black") ||
+            (gameState.currentPlayer === "black" && pieceColor === "white")
           ) {
             console.log("Invalid move: wrong player");
             return;
           }
-          selectedPiece = object.name;
-          fromSquare = pieceSquare;
+          gameState.selectedPiece = object.name;
+          gameState.fromSquare = pieceSquare;
           console.log(
-            `Piece clicked: ${selectedPiece} at square ${fromSquare}`
+            `Piece clicked: ${gameState.selectedPiece} at square ${gameState.fromSquare}`
           );
 
           //get valid moves
-          const validMoves = chess.moves({ square: fromSquare, verbose: true });
+          const validMoves = chess.moves({ square: gameState.fromSquare, verbose: true });
 
           // If the piece has valid moves, highlight them
           if (validMoves.length > 0) {
             //highlightValidMoves(validMoves);
-            console.log(`Valid moves for ${selectedPiece}:`, validMoves);
+            console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
           } else {
-            //If no valid moves, set selectedPiece and fromSquare back to null
-            console.log(`No valid moves available for ${selectedPiece}`);
-            selectedPiece = null;
-            fromSquare = null;
+            //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
+            console.log(`No valid moves available for ${gameState.selectedPiece}`);
+            gameState.selectedPiece = null;
+            gameState.fromSquare = null;
             return;
           }
         }
         // If piece is selected before clicking
-      } else if (fromSquare != null) {
+      } else if (gameState.fromSquare != null) {
         const pieceIntersect = intersects.find(
           (i) => i.object && i.object.name && i.object.name.includes("piece")
         );
@@ -183,49 +109,49 @@ export function initLocalMultiplayer() {
 
           //Check if clicked piece belongs to other player
           if (
-            (currentPlayer === "white" && pieceColor === "black") ||
-            (currentPlayer === "black" && pieceColor === "white")
+            (gameState.currentPlayer === "white" && pieceColor === "black") ||
+            (gameState.currentPlayer === "black" && pieceColor === "white")
           ) {
             // Get coordinates from the piece and use it as a square to move to if valid
-            if (fromSquare) {
+            if (gameState.fromSquare) {
               const validMoves = chess.moves({
-                square: fromSquare,
+                square: gameState.fromSquare,
                 verbose: true,
               });
               const toSquare = getPieceSquareFromWorldCoordinates(object);
 
               if (validMoves.some((move) => move.to === toSquare)) {
-                movePiece(fromSquare, toSquare);
-                checkGameStatus();
+                movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState);
+                checkGameStatus(chess);
               } else {
                 console.log("Invalid move");
-                selectedPiece = null;
-                fromSquare = null;
+                gameState.selectedPiece = null;
+                gameState.fromSquare = null;
               }
             }
-            // If selected piece is currentPlayer piece
+            // If selected piece is gameState.currentPlayer piece
           } else {
-            selectedPiece = object.name;
-            fromSquare = pieceSquare;
+            gameState.selectedPiece = object.name;
+            gameState.fromSquare = pieceSquare;
             console.log(
-              `Piece clicked: ${selectedPiece} at square ${fromSquare}`
+              `Piece clicked: ${gameState.selectedPiece} at square ${gameState.fromSquare}`
             );
 
             //get valid moves
             const validMoves = chess.moves({
-              square: fromSquare,
+              square: gameState.fromSquare,
               verbose: true,
             });
 
             // If the piece has valid moves, highlight them
             if (validMoves.length > 0) {
               //highlightValidMoves(validMoves);
-              console.log(`Valid moves for ${selectedPiece}:`, validMoves);
+              console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
             } else {
-              //If no valid moves, set selectedPiece and fromSquare back to null
-              console.log(`No valid moves available for ${selectedPiece}`);
-              selectedPiece = null;
-              fromSquare = null;
+              //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
+              console.log(`No valid moves available for ${gameState.selectedPiece}`);
+              gameState.selectedPiece = null;
+              gameState.fromSquare = null;
               return;
             }
           }
@@ -239,16 +165,16 @@ export function initLocalMultiplayer() {
       const toSquare = worldToChess(x, z); // Convert to chessboard coordinates
       console.log("Square clicked:", toSquare);
 
-      if (fromSquare) {
-        const validMoves = chess.moves({ square: fromSquare, verbose: true });
+      if (gameState.fromSquare) {
+        const validMoves = chess.moves({ square: gameState.fromSquare, verbose: true });
 
         if (validMoves.some((move) => move.to === toSquare)) {
-          movePiece(fromSquare, toSquare);
-          checkGameStatus();
+          movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState);
+          checkGameStatus(chess);
         } else {
           console.log("Invalid move");
-          selectedPiece = null;
-          fromSquare = null;
+          gameState.selectedPiece = null;
+          gameState.fromSquare = null;
         }
       }
     }
@@ -256,64 +182,6 @@ export function initLocalMultiplayer() {
 
   window.addEventListener("click", onMouseClick);
 
-  function getPieceSquareFromWorldCoordinates(piece) {
-    const piecePosition = piece.position;
-    const chessSquare = worldToChess(piecePosition.x, piecePosition.z);
-    return chessSquare;
-  }
-
-  function movePiece(from, to) {
-    const move = chess.move({ from, to });
-    if (move === null) {
-      console.log("Invalid move");
-      selectedPiece = null;
-      return;
-    }
-    console.log("Move made in chess.js:", move);
-
-    const movingPiece = pieces[from];
-    if (!movingPiece) {
-      console.warn("No piece at", from);
-      return;
-    }
-
-    // handle capture
-    if (move.captured && pieces[to]) {
-      scene.remove(pieces[to]);
-      delete pieces[to];
-    }
-    //move the 3D object
-    const { x, z } = chessToWorld(to);
-    movingPiece.position.set(x, movingPiece.position.y, z);
-
-    //update mapping
-    delete pieces[from]; // Remove the piece from the old square
-    pieces[to] = movingPiece; // Add the piece to the new square
-
-    //update piece name
-    const colorName = move.color === "w" ? "white" : "black";
-    movingPiece.name = `piece_${colorName}_${move.piece}_${to}`;
-
-    // switch player
-    currentPlayer = currentPlayer === "white" ? "black" : "white";
-    console.log(`Current player: ${currentPlayer}`);
-
-    selectedPiece = null;
-    fromSquare = null;
-    console.log("Pieces mapping:", pieces);
-    console.log("Chess board state:", chess.ascii());
-    console.log("Chess board fen:", chess.fen());
-    console.log("Chess board pgn:", chess.pgn());
-  }
-
-  function checkGameStatus() {
-    if (chess.isGameOver()) {
-      console.log("Game over");
-      // Implement game over logic here (e.g., show message, reset game, etc.)
-    } else if (chess.inCheck()) {
-      console.log("Check!");
-    }
-  }
 
   // Render loop
   function animate() {
