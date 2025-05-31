@@ -21,6 +21,9 @@ export function initAIGame(playerColor) {
   // Create pieces
   const pieces = createInitialPieces(scene);
 
+  // Create AI worker
+  const stockfish = new Worker('/engines/stockfish.wasm.js');
+
   // Create a new chess game + raycaster
   const chess = new Chess();
   const raycaster = new THREE.Raycaster();
@@ -59,7 +62,5 @@ export function initAIGame(playerColor) {
     const pieceIntersect = intersects.find(
       (i) => i.object && i.object.name && i.object.name.includes("piece")
     );
-
   }
-
 }
