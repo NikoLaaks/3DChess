@@ -1,4 +1,5 @@
 import { worldToChess, chessToWorld } from "./utils.js";
+import { gameLoop } from "../modes/aiGame.js";
 
 /**
  * Get the chess square from a 3D piece object.
@@ -63,4 +64,8 @@ export function movePiece(from, to, scene, pieces, chess, gameState) {
   console.log("Chess board state:", chess.ascii());
   console.log("FEN:", chess.fen());
   console.log("PGN:", chess.pgn());
-}
+
+  if (gameState.AIGame == true) {
+    gameLoop(chess);
+  };
+};

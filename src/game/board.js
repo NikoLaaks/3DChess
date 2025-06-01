@@ -4,8 +4,8 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 const gltfloader = new GLTFLoader();
 
 export function createBoard(scene) {
-    // Load board model
-    gltfloader.load("/Shakkilauta.gltf", (gltf) => {
+  // Load board model
+  gltfloader.load("/Shakkilauta.gltf", (gltf) => {
     const chessBoard = gltf.scene.children[0];
     scene.add(chessBoard);
 
@@ -14,14 +14,12 @@ export function createBoard(scene) {
 
     const boundingBox = new THREE.Box3().setFromObject(chessBoard);
     const size = boundingBox.getSize(new THREE.Vector3());
-    console.log("Chessboard size:", size);
 
     //chessboard material
     chessBoard.traverse((child) => {
-        if (child.isMesh) {
-        console.log(child.material);
-        }
+      if (child.isMesh) {
+        //console.log(child.material);
+      }
     });
-    });
-    
-};
+  });
+}

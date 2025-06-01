@@ -23,6 +23,7 @@ npm run dev
 - Landing page
 - Lokaali multiplayer
 - Tekoäly singleplayer
+- game over logiikka
 
 ## extrat myöhemmin
 - Näytä sallitut liikkeet

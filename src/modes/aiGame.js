@@ -1,15 +1,19 @@
 import * as THREE from "three";
 import { Chess } from "chess.js";
 import { initScene } from "../game/scene.js";
-import { worldToChess, chessToWorld } from '../game/utils.js';
-import { movePiece, getPieceSquareFromWorldCoordinates } from "../game/movement.js";
+import { worldToChess, chessToWorld } from "../game/utils.js";
+import {
+  movePiece,
+  getPieceSquareFromWorldCoordinates,
+} from "../game/movement.js";
 import { createInitialPieces } from "../game/pieces.js";
-import { createBoard } from '../game/board.js';
+import { createBoard } from "../game/board.js";
 import { checkGameStatus } from "../game/status.js";
-
+import { onMouseClick } from "../game/clickHandler.js";
+import { makeAiMove } from "../game/makeAiMove.js";
 
 export function initAIGame(playerColor) {
-    // Select the canvas element
+  // Select the canvas element
   const canvas = document.querySelector(".webgl");
 
   // Init scene
@@ -21,46 +25,69 @@ export function initAIGame(playerColor) {
   // Create pieces
   const pieces = createInitialPieces(scene);
 
-  // Create AI worker
-  const stockfish = new Worker('/engines/stockfish.wasm.js');
-
   // Create a new chess game + raycaster
   const chess = new Chess();
-  const raycaster = new THREE.Raycaster();
-  const mouse = new THREE.Vector2();
-  const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0); // Plane at y=0
 
   const gameState = {
     currentPlayer: "white",
     playerColor,
     selectedPiece: null,
     fromSquare: null,
+    AIGame: true,
   };
 
-  /*
-  * Handle mouseclicks
-  */
-  function onMouseClick(event) {
-    // Only allow player to click if its players turn
-    if(gameState.currentPlayer !== gameState.playerColor) {
-        return;
+  // Setup stockfish
+  const stockfish = new Worker("/engines/stockfish.wasm.js");
+  stockfish.postMessage("uci");
+  stockfish.postMessage("isready");
+  stockfish.postMessage("ucinewgame");
+
+  gameLoop(chess, playerColor, gameState, scene, pieces, camera);
+
+  window.addEventListener("click", (event) => {
+    const turn = chess.turn();
+    const isPlayerTurn =
+      (playerColor === "white" && turn === "w") ||
+      (playerColor === "black" && turn === "b");
+    if (isPlayerTurn) {
+      console.log("PLAYER TURN", turn);
+      onMouseClick(event, camera, scene, gameState, chess, pieces);
+    } else {
+      console.log("Not players turn, ignoring click");
     }
+  });
 
-    const canvas = document.querySelector('.webgl');
-    const rect = canvas.getBoundingClientRect();
+  // Render loop
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update(); // Update controls
+    renderer.render(scene, camera);
+  }
+  animate();
 
-    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+  // Handle window resize
+  window.addEventListener("resize", () => {
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+  });
+}
 
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children, true);
-    console.log(
-      "All intersects:",
-      intersects.map((i) => i.object.name)
-    ); // For debugging, remove this
-
-    const pieceIntersect = intersects.find(
-      (i) => i.object && i.object.name && i.object.name.includes("piece")
-    );
+export function gameLoop(chess, playerColor, gameState, scene, pieces, camera) {
+  if (chess.isGameOver()) {
+    console.log("Game over");
+    return;
+  }
+  const turn = chess.turn();
+  const isPlayerTurn =
+    (playerColor === "white" && turn === "w") ||
+    (playerColor === "black" && turn === "b");
+  console.log("isPlayerTurn: ", isPlayerTurn);
+  // If not player turn, make AI move and loop again
+  if (!isPlayerTurn) {
+    console.log("AI TURN", turn);
+    makeAiMove(chess, gameState, scene, pieces, () => {
+      gameLoop(chess, playerColor);
+    });
   }
 }
