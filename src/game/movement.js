@@ -1,4 +1,6 @@
+import { getModelForPiece, yOffsets } from "./pieces.js";
 import { worldToChess, chessToWorld } from "./utils.js";
+import * as THREE from "three";
 
 /**
  * Get the chess square from a 3D piece object.
@@ -10,16 +12,9 @@ export function getPieceSquareFromWorldCoordinates(piece) {
 
 /**
  * Move a piece on the board.
- * 
- * @param {string} from - Square to move from (e.g. "e2")
- * @param {string} to - Square to move to (e.g. "e4")
- * @param {THREE.Scene} scene - The THREE.js scene
- * @param {object} pieces - Object mapping squares to piece meshes
- * @param {Chess} chess - Instance of chess.js
- * @param {object} gameState - Object containing currentPlayer, selectedPiece, fromSquare
  */
 export function movePiece(from, to, scene, pieces, chess, gameState, onMoveComplete) {
-  const move = chess.move({ from, to });
+  const move = chess.move({ from, to , promotion: "q"});
   if (move === null) {
     console.log("Invalid move");
     gameState.selectedPiece = null;
@@ -35,7 +30,20 @@ export function movePiece(from, to, scene, pieces, chess, gameState, onMoveCompl
     return;
   }
 
-  // Handle capture
+  // Handle en passant capture
+  if (move.flags.includes("e")) {
+    const capturedSquare = move.to[0] + (move.color === "w"
+      ? (parseInt(move.to[1]) - 1)
+      : (parseInt(move.to[1]) + 1));
+    const capturedPiece = pieces[capturedSquare];
+    if (capturedPiece) {
+      scene.remove(capturedPiece);
+      delete pieces[capturedSquare];
+    }
+  }
+
+
+  // Handle normal capture
   if (move.captured && pieces[to]) {
     scene.remove(pieces[to]);
     delete pieces[to];
@@ -52,6 +60,61 @@ export function movePiece(from, to, scene, pieces, chess, gameState, onMoveCompl
   // Update piece name
   const colorName = move.color === "w" ? "white" : "black";
   movingPiece.name = `piece_${colorName}_${move.piece}_${to}`;
+
+  // Handle castling
+  if (move.flags.includes("k")) {
+    // Kingside castling
+    const rookFrom = "h" + (move.color === "w" ? "1" : "8");
+    const rookTo = "f" + (move.color === "w" ? "1" : "8");
+    const rook = pieces[rookFrom];
+    if (rook) {
+      const { x, z } = chessToWorld(rookTo);
+      rook.position.set(x, rook.position.y, z);
+      pieces[rookTo] = rook;
+      delete pieces[rookFrom];
+    }
+  } else if (move.flags.includes("q")) {
+    // Queenside castling
+    const rookFrom = "a" + (move.color === "w" ? "1" : "8");
+    const rookTo = "d" + (move.color === "w" ? "1" : "8");
+    const rook = pieces[rookFrom];
+    if (rook) {
+      const { x, z } = chessToWorld(rookTo);
+      rook.position.set(x, rook.position.y, z);
+      pieces[rookTo] = rook;
+      delete pieces[rookFrom];
+    }
+  }
+
+  // If promoted, change pawn to queen visually
+  if (move.flags.includes("p")) {
+    console.log("Promotion detected: ", move.promotion);
+    scene.remove(movingPiece);
+    delete pieces[to];
+    const newQueen = getModelForPiece(move.color === "w" ? "white" : "black", "q");
+    if (newQueen) {
+      newQueen.traverse((child) => {
+        if (child.isMesh) {
+          child.material = new THREE.MeshStandardMaterial({
+            color: move.color === "w" ? 0xffffff : 0x454545,
+            side: THREE.DoubleSide,
+          });
+
+          child.geometry.computeBoundingBox();
+          child.geometry.computeBoundingSphere();
+          child.raycast = THREE.Mesh.prototype.raycast;
+        }
+      });
+      const { x, z } = chessToWorld(to);
+      const yOffset = yOffsets["q"];
+      newQueen.position.set(x, yOffset, z);
+      newQueen.name = `piece_${colorName}_q_${to}`;
+      newQueen.scale.set(15, 15, 15);
+      scene.add(newQueen);
+      pieces[to] = newQueen;
+    }
+
+  }
 
   // Switch player
   gameState.currentPlayer = gameState.currentPlayer === "white" ? "black" : "white";

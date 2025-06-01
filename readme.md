@@ -20,9 +20,9 @@ npm run dev
 
 
 # Todo List
-- Landing page
-- Lokaali multiplayer
-- Tekoäly singleplayer
+- en passant
+- Castling
+- Promotion
 - game over logiikka
 
 ## extrat myöhemmin

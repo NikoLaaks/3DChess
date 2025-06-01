@@ -13,13 +13,18 @@ const piecePaths = {
   k: "./chess_pieces/King.gltf",
 };
 
-const yOffsets = {
+export const yOffsets = {
   p: 0.4,
   r: 0.45,
   n: 0.35,
   b: 0.6,
   q: 0.82,
   k: 0.86,
+};
+
+export const pieceModelCache = {
+  white: {},
+  black: {},
 };
 
 export function createInitialPieces(scene) {
@@ -33,6 +38,11 @@ export function createInitialPieces(scene) {
       modelPath,
       (gltf) => {
         const piece = gltf.scene.children[0];
+
+        // Cache the original model for reuse
+        if (!pieceModelCache[color][type]) {
+          pieceModelCache[color][type] = piece.clone();
+        }
 
         piece.traverse((child) => {
           if (child.isMesh) {
@@ -86,4 +96,9 @@ export function createInitialPieces(scene) {
   createPiece("k", "black", "e8");
 
   return pieces;
+}
+
+export function getModelForPiece(color, type) {
+  const cached = pieceModelCache[color]?.[type];
+  return cached ? cached.clone() : null;
 }
