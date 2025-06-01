@@ -1,5 +1,4 @@
 import { worldToChess, chessToWorld } from "./utils.js";
-import { gameLoop } from "../modes/aiGame.js";
 
 /**
  * Get the chess square from a 3D piece object.
@@ -19,7 +18,7 @@ export function getPieceSquareFromWorldCoordinates(piece) {
  * @param {Chess} chess - Instance of chess.js
  * @param {object} gameState - Object containing currentPlayer, selectedPiece, fromSquare
  */
-export function movePiece(from, to, scene, pieces, chess, gameState) {
+export function movePiece(from, to, scene, pieces, chess, gameState, onMoveComplete) {
   const move = chess.move({ from, to });
   if (move === null) {
     console.log("Invalid move");
@@ -64,8 +63,9 @@ export function movePiece(from, to, scene, pieces, chess, gameState) {
   console.log("Chess board state:", chess.ascii());
   console.log("FEN:", chess.fen());
   console.log("PGN:", chess.pgn());
+  console.log(gameState.AIGame)
 
-  if (gameState.AIGame == true) {
-    gameLoop(chess);
-  };
+  if (gameState.AIGame === true && typeof onMoveComplete === "function") {
+    onMoveComplete();
+  }
 };

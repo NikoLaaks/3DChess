@@ -4,7 +4,7 @@ import { getPieceSquareFromWorldCoordinates } from "./movement";
 import { movePiece } from "./movement";
 import { checkGameStatus } from "./status";
 
-export function onMouseClick(event, camera, scene, gameState, chess, pieces) {
+export function onMouseClick(event, camera, scene, gameState, chess, pieces, continueGameLoop) {
     console.clear();
     console.log('turn:', chess.turn());
 
@@ -94,7 +94,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces) {
               const toSquare = getPieceSquareFromWorldCoordinates(object);
 
               if (validMoves.some((move) => move.to === toSquare)) {
-                movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState);
+                movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
                 checkGameStatus(chess);
               } else {
                 console.log("Invalid move");
@@ -142,7 +142,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces) {
         const validMoves = chess.moves({ square: gameState.fromSquare, verbose: true });
 
         if (validMoves.some((move) => move.to === toSquare)) {
-          movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState);
+          movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
           checkGameStatus(chess);
         } else {
           console.log("Invalid move");
