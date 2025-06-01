@@ -1,15 +1,6 @@
+# 3D chess browser game
+This project is a 3D chess game built using **Three.js** for rendering 3D objects, **chess.js** for move validation, and **Stockfish** for AI opponent logic.
 
-## Setup
-Download [Node.js](https://nodejs.org/en/download/).
-Run this followed commands:
-
-``` bash
-# Install dependencies (only the first time)
-npm install
-
-# Run the local server at localhost:8080
-npm run dev
-```
 
 ## Stockfish.js
 - https://github.com/lichess-org/stockfish.js
@@ -18,12 +9,8 @@ npm run dev
 # In progress
 - Tekoäly singleplayer
 
-
 # Todo List
-- en passant
-- Castling
-- Promotion
-- game over logiikka
+- game over logic
 
 ## extrat myöhemmin
 - Näytä sallitut liikkeet
