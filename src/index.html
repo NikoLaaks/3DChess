@@ -20,12 +20,20 @@
         <button id="btnLocalMultiplayer">Play Local Multiplayer</button>
         <button id="btnAIisBlack">Play against AI as white</button>
         <button id="btnAIisWhite">Play against AI as black</button>
-        <!-- Later: Add AI and Online buttons -->
     </div>
     
     <!-- Game Canvas View -->
     <div id="game" class="view" style="display: none;">
         <canvas class="webgl"></canvas>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverOverlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2 id="gameOverMessage">Game Over</h2>
+            <button id="btnRestartGame">Restart</button>
+            <button id="btnReturnToMenu">Back to Menu</button>
+        </div>
     </div>
 
 
