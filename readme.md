@@ -1,20 +1,23 @@
+# **This project is still in progress and will be cleaned before first version is deployed**
+
 # 3D chess browser game
-This project is a 3D chess game built using **Three.js** for rendering 3D objects, **chess.js** for move validation, and **Stockfish** for AI opponent logic.
+This project is a 3D chess game built using **Three.js** for rendering 3D objects, **chess.js** for move validation, and **Stockfish** for AI opponent logic. 
 
 # Documentation
-
+For detailed documentation see the [game documentation](/documentation.md)
 
 # In progress
 - AI singleplayer
 
 # Todo List
-- Show valid moves
-- Show selected piece
+- Show valid moves (transparent circle planes on squares)
+- Show selected piece (glow around piece or elevation/animation)
+- Different camera options(remove orbit controls, move camera with keyboard)
 - Animations for pieces
 - Scene upgrades(table, animations, background)
 - Clock(maybe 3D)
 - Soundeffects
-- Multiplayer(Extra)
+- Multiplayer(Extra, firebase?)
 
 ## Stockfish.js
 - https://github.com/lichess-org/stockfish.js
