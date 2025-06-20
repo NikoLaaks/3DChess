@@ -20,16 +20,16 @@ export function initScene(canvas) {
   // Directional light
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
   directionalLight.position.set(10, 10, 10);
-  scene.add(directionalLight);
+  //scene.add(directionalLight);
 
-  // Point light above the board
-  const pointLight = new THREE.PointLight(0xffffff, 1, 100);
-  pointLight.position.set(0, 15, 0);
-  scene.add(pointLight);
+  // Ambient light
+  const sun = new THREE.PointLight(0xffffff, 10000, 0, 2);
+  sun.position.set(-70, 20, 0);
+  scene.add(sun);
+  const sunHelper = new THREE.PointLightHelper(sun, 1);
+  scene.add(sunHelper);
 
-  // Point light helper (optional, good for dev)
-  const pointLightHelper = new THREE.PointLightHelper(pointLight, 1);
-  scene.add(pointLightHelper);
+
 
   // Controls
   const controls = new OrbitControls(camera, renderer.domElement);

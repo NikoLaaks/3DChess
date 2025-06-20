@@ -7,6 +7,7 @@ import { createInitialPieces } from "../game/pieces.js";
 import { createBoard } from '../game/board.js';
 import { checkGameStatus } from "../game/status.js";
 import { onMouseClick } from "../game/clickHandler.js";
+import { createRoom } from "../game/room.js";
 
 export function initLocalMultiplayer() {
   // Select the canvas element
@@ -14,6 +15,9 @@ export function initLocalMultiplayer() {
 
   // Init scene
   const { scene, camera, renderer, controls } = initScene(canvas);
+
+  // Create room
+  createRoom(scene);
 
   // Create board
   createBoard(scene);
