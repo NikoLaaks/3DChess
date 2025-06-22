@@ -37,15 +37,15 @@ export function initScene(canvas) {
   controls.dampingFactor = 0.25;
 
   // Axes helper
-  const axesHelper = new THREE.AxesHelper(5);
-  scene.add(axesHelper);
+  //const axesHelper = new THREE.AxesHelper(5);
+  //scene.add(axesHelper);
 
   // Grid helper (debugging)
-  const boardSize = 8;
-  const gridHelper = new THREE.GridHelper(boardSize, boardSize, "red", "orange");
-  gridHelper.rotation.x = Math.PI;
-  gridHelper.position.y = 0.01;
-  scene.add(gridHelper);
+  //const boardSize = 8;
+  //const gridHelper = new THREE.GridHelper(boardSize, boardSize, "red", "orange");
+  //gridHelper.rotation.x = Math.PI;
+  //gridHelper.position.y = 0.01;
+  //scene.add(gridHelper);
 
   // Handle resizing
   window.addEventListener("resize", () => {

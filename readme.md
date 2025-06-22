@@ -6,15 +6,12 @@ This project is a 3D chess game built using **Three.js** for rendering 3D object
 # Documentation
 For detailed documentation see the [game documentation](/documentation.md)
 
-# In progress
-- AI singleplayer
 
 # Todo List
 - Show valid moves (transparent circle planes on squares)
 - Show selected piece (glow around piece or elevation/animation)
 - Different camera options(remove orbit controls, move camera with keyboard)
 - Animations for pieces
-- Scene upgrades(table, animations, background)
 - Clock(maybe 3D)
 - Soundeffects
 - Multiplayer(Extra, firebase?)

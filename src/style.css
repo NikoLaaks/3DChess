@@ -4,6 +4,79 @@ body {
     overflow: hidden;
   }
 
+/* Canvas positioning */
+.landing-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none; /* Allow clicks to pass through to elements below */
+  background-color: #141414;
+}
+
+/* Landing page content styling */
+#landingPage {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Wrapper for the text and buttons */
+.landing-content {
+  background-color: rgba(155, 111, 111, 0.7);
+  padding: 5rem;
+  border-radius: 10px;
+  text-align: center;
+  font-family: Cinzel, serif;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-top: 200px;
+  width: 90%;
+  box-sizing: border-box;
+}
+.landing-content h1 {
+  font-size: 3.815rem;
+  color: #fff;
+  margin-bottom: 1rem;
+}
+.landing-content p {
+  font-size: 1rem;
+  color: #fff;
+  margin-bottom: 2rem;
+}
+.landing-content a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: bold;
+  font-size: 1.2rem;
+  transition: color 0.3s;
+}
+
+/* Button styling */
+#landingPage button {
+  margin: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  background-color: #4a4a4a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+#landingPage button:hover {
+  background-color: #666666;
+}
+
 .overlay {
   position: absolute;
   top: 0;
@@ -22,4 +95,11 @@ body {
   padding: 2rem;
   border-radius: 10px;
   text-align: center;
+}
+
+/* For smaller screens, reduce the top margin */
+@media (max-height: 700px) {
+  .landing-content {
+    margin-top: 100px;
+  }
 }

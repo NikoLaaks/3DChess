@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>First Three.js Project</title>
     <link rel="stylesheet" href="./style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Top Navigation Bar (Hidden initially, shown during game) -->
@@ -15,11 +16,14 @@
 
     <!-- Landing Page View -->
     <div id="landingPage" class="view">
-        <h1>3D Chess Game</h1>
-        <p>Play chess in 3D – against another player or AI.</p>
-        <button id="btnLocalMultiplayer">Play Local Multiplayer</button>
-        <button id="btnAIisBlack">Play against AI as white</button>
-        <button id="btnAIisWhite">Play against AI as black</button>
+        <canvas class="landing-canvas"></canvas>
+        <div class="landing-content">
+            <h1>3D Chess</h1>
+            <p>Play chess in 3D – against another player or AI.</p>
+            <button id="btnLocalMultiplayer">Play Local Multiplayer</button>
+            <button id="btnAIisBlack">Play against AI as white</button>
+            <button id="btnAIisWhite">Play against AI as black</button>
+        </div>
     </div>
     
     <!-- Game Canvas View -->
