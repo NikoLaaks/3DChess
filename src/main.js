@@ -1,6 +1,7 @@
 import { initAIGame } from './modes/aiGame.js';
 import { initLocalMultiplayer } from './modes/localMultiplayer.js';
 import { initLandingAnimation, resumeLandingAnimation } from './landingAnimation.js';
+import { toggleSetting } from './game/settings.js';
 
 initLandingAnimation();
 
@@ -44,6 +45,10 @@ document.getElementById('btnBackToMenu').addEventListener('click', () => {
   switchToView('landingPage');
   document.getElementById('gameHeader').style.display = 'none'; // Hide top bar
   resumeLandingAnimation(); // Resume the landing page animation
+});
+
+document.getElementById('toggleValidMoves').addEventListener('click', () => {
+  toggleSetting('showValidMoves');
 });
 
 // Restart button in game over modal

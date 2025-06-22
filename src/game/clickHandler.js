@@ -1,8 +1,9 @@
 import * as THREE from "three";
-import { worldToChess } from "./utils";
+import { worldToChess, highlightValidMoves, removeHighlights } from "./utils";
 import { getPieceSquareFromWorldCoordinates } from "./movement";
 import { movePiece } from "./movement";
 import { checkGameStatus } from "./status";
+import { remove } from "three/examples/jsm/libs/tween.module.js";
 
 export function onMouseClick(event, camera, scene, gameState, chess, pieces, continueGameLoop) {
     console.clear();
@@ -21,10 +22,6 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
     //Use raycaster to get clicked object
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(scene.children, true);
-    //console.log(
-    //  "All intersects:",
-    //  intersects.map((i) => i.object.name)
-    //); // For debugging, remove this
 
     const pieceIntersect = intersects.find(
       (i) => i.object && i.object.name && i.object.name.includes("piece")
@@ -48,6 +45,10 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
             console.log("Invalid move: wrong player");
             return;
           }
+          
+          // Remove any existing highlights before showing new ones
+          removeHighlights(scene);
+          
           gameState.selectedPiece = object.name;
           gameState.fromSquare = pieceSquare;
           console.log(
@@ -59,7 +60,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
 
           // If the piece has valid moves, highlight them
           if (validMoves.length > 0) {
-            //highlightValidMoves(validMoves);
+            highlightValidMoves(validMoves, scene);
             console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
           } else {
             //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
@@ -94,16 +95,25 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
               const toSquare = getPieceSquareFromWorldCoordinates(object);
 
               if (validMoves.some((move) => move.to === toSquare)) {
+                // Remove highlights before moving
+                removeHighlights(scene);
+                
                 movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
                 checkGameStatus(chess);
               } else {
                 console.log("Invalid move");
                 gameState.selectedPiece = null;
                 gameState.fromSquare = null;
+                
+                // Remove highlights for invalid move
+                removeHighlights(scene);
               }
             }
             // If selected piece is gameState.currentPlayer piece
           } else {
+            // Remove existing highlights before showing new ones
+            removeHighlights(scene);
+            
             gameState.selectedPiece = object.name;
             gameState.fromSquare = pieceSquare;
             console.log(
@@ -118,7 +128,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
 
             // If the piece has valid moves, highlight them
             if (validMoves.length > 0) {
-              //highlightValidMoves(validMoves);
+              highlightValidMoves(validMoves, scene);
               console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
             } else {
               //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
@@ -142,12 +152,17 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
         const validMoves = chess.moves({ square: gameState.fromSquare, verbose: true });
 
         if (validMoves.some((move) => move.to === toSquare)) {
+          removeHighlights(scene);
+          
           movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
           checkGameStatus(chess);
         } else {
           console.log("Invalid move");
           gameState.selectedPiece = null;
           gameState.fromSquare = null;
+          
+          // Remove highlights for invalid move
+          removeHighlights(scene);
         }
       }
     }

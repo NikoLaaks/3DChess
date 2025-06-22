@@ -10,6 +10,7 @@ For detailed documentation see the [game documentation](/documentation.md)
 # Todo List
 - Show valid moves (transparent circle planes on squares)
 - Show selected piece (glow around piece or elevation/animation)
+- Loading screen
 - Different camera options(remove orbit controls, move camera with keyboard)
 - Animations for pieces
 - Clock(maybe 3D)
