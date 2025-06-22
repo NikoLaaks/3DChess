@@ -11,6 +11,7 @@ For detailed documentation see the [game documentation](/documentation.md)
 - Different camera options(remove orbit controls, move camera with keyboard)
 - Show selected piece (glow around piece or elevation/animation)
 - Nav bar fixes
+- Board materials
 - Soundeffects
 - Loading screen
 - Animations for pieces
