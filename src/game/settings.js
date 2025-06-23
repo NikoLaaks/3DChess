@@ -1,6 +1,6 @@
 export const gameSettings = {
   showValidMoves: true, 
-  //highlightSelectedPiece: true,
+  highlightSelectedPiece: true,
   //soundEffects: true,
 };
 

@@ -14,7 +14,7 @@ export function initLocalMultiplayer() {
   const canvas = document.querySelector(".webgl");
 
   // Init scene
-  const { scene, camera, renderer, controls } = initScene(canvas);
+  const { scene, camera, renderer, controls } = initScene(canvas, "white");
 
   // Create room
   createRoom(scene);
@@ -32,6 +32,7 @@ export function initLocalMultiplayer() {
   const gameState = {
     currentPlayer: "white",
     selectedPiece: null,
+    previousSelectedPiece: null,
     fromSquare: null,
     AIGame: false
   };

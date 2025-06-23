@@ -118,6 +118,15 @@ export function movePiece(from, to, scene, pieces, chess, gameState, onMoveCompl
 
   // Switch player
   gameState.currentPlayer = gameState.currentPlayer === "white" ? "black" : "white";
+
+  //Reset selected piece and elevation
+  if (gameState.previousSelectedObject) {
+    const parts = gameState.previousSelectedObject.name.split("_");
+    const type = parts[2]; // piece_{color}_{type}_{square}
+    gameState.previousSelectedObject.position.y = yOffsets[type] ?? 0; // Reset to original height
+    gameState.previousSelectedObject = null; // Clear the previous selected object
+  }
+
   gameState.selectedPiece = null;
   gameState.fromSquare = null;
 

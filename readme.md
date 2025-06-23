@@ -8,14 +8,15 @@ For detailed documentation see the [game documentation](/documentation.md)
 
 
 # Todo List
+- AI difficulty settings
+- Lift lamp on scene to be further from table
 - Different camera options(remove orbit controls, move camera with keyboard)
-- Show selected piece (glow around piece or elevation/animation)
-- Nav bar fixes
+- Checkbox for piece highlights
+- Nav bar fixes, room lighting fixes
 - Soundeffects
 - Loading screen
 - Animations for pieces
 - Clock(maybe 3D)
-- Multiplayer(Extra, firebase?)
 
 ## Stockfish.js
 - https://github.com/lichess-org/stockfish.js

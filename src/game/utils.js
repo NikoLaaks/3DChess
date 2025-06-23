@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { gameSettings } from "./settings.js";
+import { yOffsets } from "./pieces.js";
 
 // Convert world coordinates to chessboard coordinates
 export function worldToChess(x, z) {
@@ -17,7 +18,31 @@ export function chessToWorld(square) {
   };
 }
 
-export function highlightValidMoves(validMoves, scene) {
+export function highlightValidMoves(validMoves, scene, gameState) {
+  /*
+  * If highlighting is enabled, highlight valid moves for the selected piece.
+  */
+  if (gameSettings.highlightSelectedPiece && gameState.selectedPiece) {
+    // Find the selected piece in the scene
+    const selectedObject = scene.getObjectByName(gameState.selectedPiece);
+
+    if (selectedObject) {
+      
+        // Lower previously selected piece
+      if (gameState.previousSelectedObject && gameState.previousSelectedObject !== gameState.selectedObject) {
+        const prevNameParts = gameState.previousSelectedObject.name.split("_");
+        const prevType = prevNameParts[2]; // piece_{color}_{type}_{square}
+        gameState.previousSelectedObject.position.y = yOffsets[prevType] ?? 0; // Reset to original height
+      }
+      const nameParts = selectedObject.name.split("_");
+      const type = nameParts[2]; // piece_{color}_{type}_{square}
+      selectedObject.position.y = (yOffsets[type] ?? 0) + 0.2; // Elevate selected piece
+
+      gameState.previousSelectedObject = selectedObject; // Store the currently selected piece
+
+      }
+    }
+
   if (!gameSettings.showValidMoves) {
     return; // Exit early if highlighting is disabled
   }
@@ -46,6 +71,9 @@ export function highlightValidMoves(validMoves, scene) {
 }
 
 export function removeHighlights(scene) {
+  if (!gameSettings.showValidMoves) {
+    return; // Exit early if highlighting is disabled
+  }
   // Create a list of objects to remove
   const objectsToRemove = [];
   
@@ -62,6 +90,18 @@ export function removeHighlights(scene) {
   });
   
   console.log(`Removed ${objectsToRemove.length} highlight objects`);
+}
+
+export function resetPieceElevation(gameState, pieces) {
+  if (!gameState.selectedPiece) return;
+
+  const prevPieceName = gameState.selectedPiece;
+  const prevPiece = Object.values(pieces).find(p => p.name === prevPieceName);
+
+  if (prevPiece) {
+    const pieceType = prevPieceName.split("_")[2]; // "p", "k", etc.
+    prevPiece.position.y = yOffsets[pieceType] || 0;
+  }
 }
 
 

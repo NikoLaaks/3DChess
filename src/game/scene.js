@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
-export function initScene(canvas) {
+export function initScene(canvas, playerColor) {
   const scene = new THREE.Scene();
 
   // Camera setup
@@ -11,7 +11,11 @@ export function initScene(canvas) {
     0.1,
     1000
   );
-  camera.position.set(0, 8, 8);
+  if (playerColor === "white") {
+    camera.position.set(0, 8, 8);
+  } else {
+    camera.position.set(0, 8, -8);
+  };
 
   // Renderer
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
@@ -26,8 +30,8 @@ export function initScene(canvas) {
   const sun = new THREE.PointLight(0xffffff, 10000, 0, 2);
   sun.position.set(-70, 20, 0);
   scene.add(sun);
-  const sunHelper = new THREE.PointLightHelper(sun, 1);
-  scene.add(sunHelper);
+  //const sunHelper = new THREE.PointLightHelper(sun, 1);
+  //scene.add(sunHelper);
 
 
 

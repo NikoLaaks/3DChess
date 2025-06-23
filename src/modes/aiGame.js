@@ -17,7 +17,7 @@ export function initAIGame(playerColor) {
   const canvas = document.querySelector(".webgl");
 
   // Init scene
-  const { scene, camera, renderer, controls } = initScene(canvas);
+  const { scene, camera, renderer, controls } = initScene(canvas, playerColor);
 
   // Create room
   createRoom(scene);
@@ -35,6 +35,7 @@ export function initAIGame(playerColor) {
     currentPlayer: "white",
     playerColor,
     selectedPiece: null,
+    previousSelectedPiece: null,
     fromSquare: null,
     AIGame: true,
   };

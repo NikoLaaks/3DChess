@@ -3,7 +3,7 @@ import { worldToChess, highlightValidMoves, removeHighlights } from "./utils";
 import { getPieceSquareFromWorldCoordinates } from "./movement";
 import { movePiece } from "./movement";
 import { checkGameStatus } from "./status";
-import { remove } from "three/examples/jsm/libs/tween.module.js";
+import { resetPieceElevation } from "./utils";
 
 export function onMouseClick(event, camera, scene, gameState, chess, pieces, continueGameLoop) {
     console.clear();
@@ -48,6 +48,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
           
           // Remove any existing highlights before showing new ones
           removeHighlights(scene);
+          resetPieceElevation(gameState, pieces);
           
           gameState.selectedPiece = object.name;
           gameState.fromSquare = pieceSquare;
@@ -60,7 +61,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
 
           // If the piece has valid moves, highlight them
           if (validMoves.length > 0) {
-            highlightValidMoves(validMoves, scene);
+            highlightValidMoves(validMoves, scene, gameState);
             console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
           } else {
             //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
@@ -97,6 +98,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
               if (validMoves.some((move) => move.to === toSquare)) {
                 // Remove highlights before moving
                 removeHighlights(scene);
+                resetPieceElevation(gameState, pieces);
                 
                 movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
                 checkGameStatus(chess);
@@ -107,12 +109,14 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
                 
                 // Remove highlights for invalid move
                 removeHighlights(scene);
+                resetPieceElevation(gameState, pieces);
               }
             }
             // If selected piece is gameState.currentPlayer piece
           } else {
             // Remove existing highlights before showing new ones
             removeHighlights(scene);
+            resetPieceElevation(gameState, pieces);
             
             gameState.selectedPiece = object.name;
             gameState.fromSquare = pieceSquare;
@@ -128,7 +132,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
 
             // If the piece has valid moves, highlight them
             if (validMoves.length > 0) {
-              highlightValidMoves(validMoves, scene);
+              highlightValidMoves(validMoves, scene, gameState);
               console.log(`Valid moves for ${gameState.selectedPiece}:`, validMoves);
             } else {
               //If no valid moves, set gameState.selectedPiece and gameState.fromSquare back to null
@@ -153,6 +157,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
 
         if (validMoves.some((move) => move.to === toSquare)) {
           removeHighlights(scene);
+          resetPieceElevation(gameState, pieces);
           
           movePiece(gameState.fromSquare, toSquare, scene, pieces, chess, gameState, continueGameLoop);
           checkGameStatus(chess);
@@ -163,6 +168,7 @@ export function onMouseClick(event, camera, scene, gameState, chess, pieces, con
           
           // Remove highlights for invalid move
           removeHighlights(scene);
+          resetPieceElevation(gameState, pieces);
         }
       }
     }
