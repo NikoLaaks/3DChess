@@ -8,7 +8,6 @@ For detailed documentation see the [game documentation](/documentation.md)
 
 
 # Todo List
-- AI difficulty settings
 - Lift lamp on scene to be further from table
 - Different camera options(remove orbit controls, move camera with keyboard)
 - Checkbox for piece highlights

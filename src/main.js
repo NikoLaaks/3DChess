@@ -7,6 +7,7 @@ initLandingAnimation();
 
 
 let currentMode = null;
+let difficultySelect = document.getElementById('difficulty');
 
 // Handle "Play Local Multiplayer" button
 document.getElementById('btnLocalMultiplayer').addEventListener('click', () => {
@@ -19,17 +20,19 @@ document.getElementById('btnLocalMultiplayer').addEventListener('click', () => {
 // Handle "play against AI as white" button
 document.getElementById('btnAIisBlack').addEventListener('click', () => {
   currentMode = 'AI';
+  const selectedDifficulty = parseInt(difficultySelect.value);
   switchToView('game');
   document.getElementById('gameHeader').style.display = 'flex';
-  initAIGame("white");
+  initAIGame("white", selectedDifficulty);
 });
 
 // Handle "play against AI as black" button
 document.getElementById('btnAIisWhite').addEventListener('click', () => {
   currentMode = 'AI';
+  const selectedDifficulty = parseInt(difficultySelect.value);
   switchToView('game');
   document.getElementById('gameHeader').style.display = 'flex';
-  initAIGame("black");
+  initAIGame("black", selectedDifficulty);
 });
 
 // Handle "Restart" button on header

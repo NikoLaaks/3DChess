@@ -12,7 +12,7 @@ import { checkGameStatus } from "../game/status.js";
 import { onMouseClick } from "../game/clickHandler.js";
 import { createRoom } from "../game/room.js";
 
-export function initAIGame(playerColor) {
+export function initAIGame(playerColor, difficulty) {
   // Select the canvas element
   const canvas = document.querySelector(".webgl");
 
@@ -33,7 +33,7 @@ export function initAIGame(playerColor) {
 
   const gameState = {
     currentPlayer: "white",
-    playerColor,
+    playerColor: playerColor,
     selectedPiece: null,
     previousSelectedPiece: null,
     fromSquare: null,
@@ -45,6 +45,8 @@ export function initAIGame(playerColor) {
   stockfish.postMessage("uci");
   stockfish.postMessage("isready");
   stockfish.postMessage("ucinewgame");
+  stockfish.postMessage(`setoption name Skill Level value ${difficulty}`);
+  console.log("Stockfish initialized with difficulty:", difficulty);
 
   let aiMoveResolver = null;
 

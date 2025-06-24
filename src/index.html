@@ -22,8 +22,15 @@
             <h1>3D Chess</h1>
             <p>Play chess in 3D – against another player or AI.</p>
             <button id="btnLocalMultiplayer">Play Local Multiplayer</button>
-            <button id="btnAIisBlack">Play against AI as white</button>
-            <button id="btnAIisWhite">Play against AI as black</button>
+            
+            <fieldset class="ai-options">
+                <legend>Play Against AI</legend>
+                <button id="btnAIisBlack">Play as White</button>
+                <button id="btnAIisWhite">Play as Black</button>
+
+                <label for="difficulty">AI Difficulty:</label>
+                <select id="difficulty"></select>
+            </fieldset>
         </div>
     </div>
     
@@ -43,5 +50,14 @@
 
 
     <script type="module" src="./main.js"></script>
+    <script>
+        const difficulty = document.getElementById('difficulty');
+        for (let i = 1; i <= 20; i++) {
+            const option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            difficulty.appendChild(option);
+        }
+    </script>
 </body>
 </html>
