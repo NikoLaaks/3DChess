@@ -19,6 +19,8 @@ For detailed documentation see the [game documentation](/documentation.md)
 - Loading screen
 - Animations for pieces
 - Clock(maybe 3D)
+- Settings modal
+- Instructions/short info to the landing page
 
 ## Stockfish.js
 - https://github.com/lichess-org/stockfish.js

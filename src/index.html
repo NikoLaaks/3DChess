@@ -8,12 +8,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
     <!-- Top Navigation Bar (Hidden initially, shown during game) -->
-    <div id="gameHeader" class="top-bar" style="display: none;">
-        <button id="btnRestart">Restart</button>
+    <nav id="gameHeader" class="top-bar" style="display: none;">
+        <div id="game-buttons">
+            <button id="btnRestart">Restart</button>
         <button id="btnBackToMenu">Back to Menu</button>
-        <label><input type="checkbox" id="toggleValidMoves" checked> Show Valid Moves</label>
-    </div>
+        </div>
+        <div id="game-settings">
+            <label><input type="checkbox" id="toggleValidMoves" checked> Show Valid Moves</label>
+            <label><input type="checkbox" id="toggleHighlightMoves" checked> Highlight Moves</label>
+        </div>
+    </nav>
 
     <!-- Landing Page View -->
     <div id="landingPage" class="view">
@@ -25,11 +31,15 @@
             
             <fieldset class="ai-options">
                 <legend>Play Against AI</legend>
-                <button id="btnAIisBlack">Play as White</button>
-                <button id="btnAIisWhite">Play as Black</button>
+                <div class="ai-buttons">
+                    <button id="btnAIisWhite">Play as White</button>
+                    <button id="btnAIisBlack">Play as Black</button>
+                </div>
 
-                <label for="difficulty">AI Difficulty:</label>
-                <select id="difficulty"></select>
+                <div class="ai-difficulty">
+                    <label for="difficulty">AI Difficulty:</label>
+                    <select class="custom-select" id="difficulty"></select>
+                </div>
             </fieldset>
         </div>
     </div>

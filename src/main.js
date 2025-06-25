@@ -54,6 +54,10 @@ document.getElementById('toggleValidMoves').addEventListener('click', () => {
   toggleSetting('showValidMoves');
 });
 
+document.getElementById('toggleHighlightMoves').addEventListener('click', () => {
+  toggleSetting('highlightSelectedPiece');
+});
+
 // Restart button in game over modal
 document.getElementById('btnRestartGame').addEventListener('click', () => {
   if (currentMode === 'local') {
