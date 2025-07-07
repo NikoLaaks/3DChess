@@ -14,7 +14,7 @@ export function createRoom(scene) {
 
         // Point light helper (optional, good for dev)
         const pointLightHelper = new THREE.PointLightHelper(pointLight, 1);
-        scene.add(pointLightHelper);
+        //scene.add(pointLightHelper);
 
 
 
