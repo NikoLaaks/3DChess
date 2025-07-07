@@ -1,5 +1,8 @@
 # 3D chess browser game
-This project is a 3D chess game built using **Three.js** for rendering 3D objects, **chess.js** for move validation, and **Stockfish** for AI opponent logic. 
+This project is a 3D chess game built using **Three.js** for rendering 3D objects, **chess.js** for move validation, and **Stockfish** for AI opponent logic.
+
+## Live Demo
+Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess-pi.vercel.app/)
 
 ## Features
 - Local multiplayer (two players on the same device)
