@@ -42,6 +42,7 @@ Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess
 - **landingAnimation.js**: Provides 3D animations for the landing page.
 
 ## Todo List
+- **Ai not working in vercel**
 - Lift lamp on scene to be further from table
 - Info for main menu buttons
 - Different camera options(remove orbit controls, move camera with keyboard)

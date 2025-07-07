@@ -41,7 +41,7 @@ export function initAIGame(playerColor, difficulty) {
   };
 
   // Setup stockfish
-  const stockfish = new Worker("./engines/stockfish.wasm.js");
+  const stockfish = new Worker("/engines/stockfish.wasm.js");
   stockfish.postMessage("uci");
   stockfish.postMessage("isready");
   stockfish.postMessage("ucinewgame");
