@@ -42,6 +42,15 @@ export function initAIGame(playerColor, difficulty) {
 
   // Setup stockfish
   const stockfish = new Worker("/engines/stockfish.wasm.js");
+  
+  stockfish.onmessage = (e) => {
+    console.log("SF:", e.data);
+  };
+
+  stockfish.onerror = (e) => {
+    console.error("Worker error:", e);
+  };
+
   stockfish.postMessage("uci");
   stockfish.postMessage("isready");
   stockfish.postMessage("ucinewgame");
