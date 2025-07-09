@@ -21,12 +21,6 @@ Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess
 - **Stockfish.js**
 - **Vite**
 
-## How to run locally
-1. Clone repository
-2. cd to folder
-3. npm install
-4. npm run dev
-
 ## Main Files
 - **main.js**: Manages UI navigation, game mode initialization, and button clicks to switch between modes and menu views.
 - **localMultiplayer.js**: Sets up the local multiplayer game, including 3D scene, board, pieces, game state, and mouse handling for player moves.
@@ -41,19 +35,19 @@ Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess
 - **settings.js**: Defines the gameSettings object and provides a helper function to toggle settings.
 - **landingAnimation.js**: Provides 3D animations for the landing page.
 
+## How to run locally
+1. Clone repository
+2. cd to folder
+3. npm install
+4. npm run dev
+
 ## Todo List
-- **Ai not working in vercel**
 - Lift lamp on scene to be further from table
-- Info for main menu buttons
 - Different camera options(remove orbit controls, move camera with keyboard)
-- Checkbox for piece highlights
-- Nav bar fixes, room lighting fixes
-- Show selected piece (glow around piece or elevation/animation)
-- Nav bar fixes
+- Room lighting fixes
 - Board materials
 - Soundeffects
 - Loading screen
-- Animations for pieces
 - Clock(maybe 3D)
 - Settings modal
 - Instructions/short info to the landing page
