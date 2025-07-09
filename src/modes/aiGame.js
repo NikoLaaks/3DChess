@@ -41,14 +41,15 @@ export function initAIGame(playerColor, difficulty) {
   };
 
   // Setup stockfish
-  const stockfish = new Worker("/engines/stockfish.wasm.js");
+  const stockfishPath = window.location.origin + "/engines/stockfish.wasm.js";
+  console.log("Loading Stockfish from:", stockfishPath);
+  const stockfish = new Worker(stockfishPath);
   
-  stockfish.onmessage = (e) => {
-    console.log("SF:", e.data);
-  };
-
   stockfish.onerror = (e) => {
     console.error("Worker error:", e);
+    console.error("Error message:", e.message);
+    console.error("Error filename:", e.filename);
+    console.error("Error lineno:", e.lineno);
   };
 
   stockfish.postMessage("uci");
