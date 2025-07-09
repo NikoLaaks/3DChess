@@ -19,7 +19,7 @@ export function createRoom(scene) {
 
 
         room.scale.set(12, 12, 12);
-        room.position.set(2, -14.21, 0);
+        room.position.set(1.75, -14.21, -0.5);
         room.rotation.set(0, Math.PI / 2, 0); // Rotate the room to face the chessboard
 
         // Set up materials and ensure everything renders properly
