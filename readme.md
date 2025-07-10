@@ -22,18 +22,18 @@ Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess
 - **Vite**
 
 ## Main Files
-- **main.js**: Manages UI navigation, game mode initialization, and button clicks to switch between modes and menu views.
-- **localMultiplayer.js**: Sets up the local multiplayer game, including 3D scene, board, pieces, game state, and mouse handling for player moves.
-- **aiGame.js**: Manages the AI game mode, handling player and AI turns with Stockfish, user interactions, and game state updates.
-- **board.js**: Loads and adds the 3D chessboard model to the Three.js scene with proper position and scale.
-- **clickHandler.js**: Processes mouse click events to select and move pieces, validates moves with chess.js, and updates game state.
-- **movement.js**: Handles piece movement on the board, including captures, castling, promotion, and synchronizing the 3D scene with the game state.
-- **pieces.js**: Defines functions and data for creating and managing 3D chess pieces, loading models, positioning, caching, and cloning.
-- **scene.js**: Initializes and returns a Three.js scene with camera, renderer, lighting, orbit controls, axes, and responsive resizing.
-- **status.js**: Checks game status, determines if the game is over, and displays results in the UI overlay.
-- **utils.js**: Utility functions for converting between 3D world coordinates and chessboard notation.
-- **settings.js**: Defines the gameSettings object and provides a helper function to toggle settings.
-- **landingAnimation.js**: Provides 3D animations for the landing page.
+- **main.js** - Manages UI navigation, game mode initialization, and button clicks to switch between modes and menu views.
+- **localMultiplayer.js** - Sets up the local multiplayer game, including 3D scene, board, pieces, game state, and mouse handling for player moves.
+- **aiGame.js** - Manages the AI game mode, handling player and AI turns with Stockfish, user interactions, and game state updates.
+- **board.js** - Loads and adds the 3D chessboard model to the Three.js scene with proper position and scale.
+- **clickHandler.js** - Processes mouse click events to select and move pieces, validates moves with chess.js, and updates game state.
+- **movement.js** - Handles piece movement on the board, including captures, castling, promotion, and synchronizing the 3D scene with the game state.
+- **pieces.js** - Defines functions and data for creating and managing 3D chess pieces, loading models, positioning, caching, and cloning.
+- **scene.js** - Initializes and returns a Three.js scene with camera, renderer, lighting, orbit controls, axes, and responsive resizing.
+- **status.js** - Checks game status, determines if the game is over, and displays results in the UI overlay.
+- **utils.js** - Utility functions for converting between 3D world coordinates and chessboard notation.
+- **settings.js** - Defines the gameSettings object and provides a helper function to toggle settings.
+- **landingAnimation.js** - Provides 3D animations for the landing page.
 
 ## How to run locally
 1. Clone repository
