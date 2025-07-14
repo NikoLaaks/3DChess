@@ -51,6 +51,7 @@ Check out the live site here: [https://3d-chess-pi.vercel.app/](https://3d-chess
 - Clock(maybe 3D)
 - Settings modal
 - Instructions/short info to the landing page
+- Optimization for mobile screens
 
 ## Stockfish.js
 - https://github.com/lichess-org/stockfish.js
